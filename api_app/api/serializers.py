@@ -9,11 +9,12 @@ class TodoSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['task_name'] == data['task_description']:
-            raise serializers.ValidationError(
-                "TaskName and TaskDescription cannot be same")
+            raise serializers.ValidationError('TaskName and TaskDescription cannot be same'
+                                              )
         return data
 
     def validate_task_name(self, value):
         if len(value) < 2:
-            raise serializers.ValidationError("TaskName is too short")
+            raise serializers.ValidationError(
+                'TaskName is too short')
         return value

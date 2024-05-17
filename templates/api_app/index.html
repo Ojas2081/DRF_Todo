@@ -185,21 +185,63 @@
           //     console.log(err);
           //   });
 
-          .then((res) => res.json())
+          // ************************
           .then((response) => {
-            console.log("Hi");
-            console.log(response);
-            //   alert("ok1s");
+            if (!response.ok) {
+              // Handle error response
+              console.log(response);
+              return response.json().then((errorData) => {
+                if (response.status === 422) {
+                  // Validation error
+                  const validationErrors = errorData;
+                  // Handle validation errors, e.g., display them to the user
+                  console.error("Validation Errors:", validationErrors);
+                  console.log(validationErrors.errors1);
+                  console.log("hii");
+                } else {
+                  // Other error (e.g., 500 Internal Server Error)
+                  console.error("Server Error:", errorData);
+                }
+              });
+            }
+            // Handle successful response
+            return response.json();
+          })
+          .then((data) => {
+            // Handle successful response data
+            console.log("Success:", data);
             clearForm(e);
             getData();
-            document.getElementById("message").innerHTML = response.msg;
+            // document.getElementById("message").innerHTML = data.msg;
           })
-          .catch((err) => console.log(err));
+          .catch((error) => {
+            // Handle request error
+            console.error("Request Error:", error);
+          });
+        // ************************
+
+        // .then((res) => {
+        //   res.json();
+        //   console.log(res);
+        // })
+        // .then((response) => {
+        //   console.log("Hi");
+        //   console.log(response);
+        //   //   alert("ok1s");
+        //   clearForm(e);
+        //   getData();
+        //   // document.getElementById("message").innerHTML = response.msg;
+        // })
+        // .catch((err) => {
+        //   console.log("error1");
+        //   console.log(err);
+        // });
       }
 
       function getData() {
         var host_name = window.location.hostname + ":" + window.location.port;
         var protocol = window.location.protocol + "//";
+        var bool_body = false;
 
         var temp = fetch(protocol + host_name + "/todo/")
           .then((res) => res.json())
@@ -223,9 +265,15 @@
                 ")'>Delete</button></td>";
               tmpdata += "</tr>";
               document.getElementById("tData").innerHTML = tmpdata;
+              bool_body = true;
             });
           });
+        if (!bool_body) {
+          var tmpdata = "";
+          document.getElementById("tData").innerHTML = tmpdata;
+        }
         console.log(temp);
+        console.log("================================");
       }
 
       function editData(id) {
@@ -324,6 +372,7 @@
         }).then((response) => {
           console.log("Handling delete completed");
           getData();
+          console.log("Handling delete done");
         });
 
         // .then((response) => {
